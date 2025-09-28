@@ -31,6 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ReportCatalog } from "@/components/reports/ReportCatalog";
 
 const Reports = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -173,47 +174,7 @@ const Reports = () => {
         </TabsList>
 
         <TabsContent value="templates" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {reportTemplates.map((template) => (
-              <Card key={template.id} className="hover:shadow-card transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <FileText className="h-8 w-8 text-primary" />
-                    <Badge variant={getStatusColor(template.status) as any}>
-                      {template.status}
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-lg">{template.name}</CardTitle>
-                  <CardDescription>{template.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Category:</span>
-                      <span className="font-medium">{template.category}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Frequency:</span>
-                      <span className="font-medium">{template.frequency}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Last Submitted:</span>
-                      <span className="font-medium">{template.lastSubmitted}</span>
-                    </div>
-                    <div className="flex space-x-2 pt-2">
-                      <Button size="sm" className="flex-1">
-                        <Plus className="mr-1 h-3 w-3" />
-                        Create
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        <Eye className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <ReportCatalog />
         </TabsContent>
 
         <TabsContent value="submitted" className="space-y-6">

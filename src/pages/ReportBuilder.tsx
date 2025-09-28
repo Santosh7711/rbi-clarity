@@ -29,6 +29,8 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "@/hooks/use-toast";
 
 interface FormField {
   id: string;
@@ -44,6 +46,7 @@ const ReportBuilder = () => {
   const [reportDescription, setReportDescription] = useState("");
   const [fields, setFields] = useState<FormField[]>([]);
   const [draggedField, setDraggedField] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const fieldTypes = [
     { id: "text", label: "Text Input", icon: Type },
@@ -104,6 +107,50 @@ const ReportBuilder = () => {
     setDraggedField(null);
   };
 
+  const downloadFile = (filename: string, content: string, type = "text/csv;charset=utf-8;") => {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const generateCSVFromFields = () => {
+    if (fields.length === 0) {
+      toast({ title: "No fields added", description: "Add fields to generate CSV." });
+      return;
+    }
+    const headers = fields.map((f) => (f.label || f.id).replace(/,/g, " "));
+    const rows = Array.from({ length: 5 }).map((_, i) =>
+      headers.map(() => (i === 0 ? "" : `sample_${i}`)).join(",")
+    );
+    const csv = [headers.join(","), ...rows].join("\n");
+    const name = reportName || "custom_report";
+    downloadFile(`${name.replace(/\s+/g, "_")}.csv`, csv);
+  };
+
+  const handleSaveTemplate = () => {
+    if (!reportName) {
+      toast({ title: "Enter report name", description: "Report name is required to save." });
+      return;
+    }
+    const template = { reportName, reportDescription, fields };
+    try {
+      const existingRaw = localStorage.getItem("report_builder_templates");
+      const existing = existingRaw ? JSON.parse(existingRaw) : [];
+      const updated = [
+        ...existing.filter((t: any) => t.reportName !== reportName),
+        template,
+      ];
+      localStorage.setItem("report_builder_templates", JSON.stringify(updated));
+      toast({ title: "Template saved", description: `Saved ${reportName}` });
+    } catch {
+      toast({ title: "Save failed", description: "Could not save template." });
+    }
+  };
+
   const previewField = (field: FormField) => {
     switch (field.type) {
       case "text":
@@ -151,11 +198,11 @@ const ReportBuilder = () => {
           </p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => setPreviewOpen(true)}>
             <Eye className="mr-2 h-4 w-4" />
             Preview
           </Button>
-          <Button>
+          <Button onClick={handleSaveTemplate}>
             <Save className="mr-2 h-4 w-4" />
             Save Template
           </Button>
@@ -353,15 +400,45 @@ const ReportBuilder = () => {
 
               {fields.length > 0 && (
                 <div className="pt-4">
-                  <Button className="w-full" disabled>
-                    Submit Report
-                  </Button>
+                  <div className="grid grid-cols-1 gap-2">
+                    <Button className="w-full" onClick={generateCSVFromFields}>
+                      Generate CSV
+                    </Button>
+                    <Button className="w-full" variant="outline" disabled>
+                      Submit Report
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
           </CardContent>
         </Card>
       </div>
+
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{reportName || "Report Preview"}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {reportDescription && (
+              <p className="text-sm text-muted-foreground">{reportDescription}</p>
+            )}
+            <Separator />
+            <div className="space-y-4">
+              {fields.map((field) => (
+                <div key={field.id} className="space-y-2">
+                  <Label className="text-sm">
+                    {field.label}
+                    {field.required && <span className="text-destructive ml-1">*</span>}
+                  </Label>
+                  {previewField(field)}
+                </div>
+              ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
