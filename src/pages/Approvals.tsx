@@ -36,9 +36,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { toast } from "@/hooks/use-toast";
+
 const Approvals = () => {
   const [selectedReport, setSelectedReport] = useState<any>(null);
   const [reviewComment, setReviewComment] = useState("");
+  const [reports, setReports] = useState(pendingReports);
+  const [reviewedReports, setReviewedReports] = useState(recentlyReviewed);
 
   const pendingReports = [
     {
@@ -154,13 +158,61 @@ const Approvals = () => {
   };
 
   const handleApprove = (reportId: string) => {
-    console.log("Approving report:", reportId);
-    // Here you would typically make an API call
+    const report = reports.find(r => r.id === reportId);
+    if (report) {
+      // Move to reviewed reports
+      const newReviewedReport = {
+        id: report.id,
+        name: report.name,
+        type: report.type,
+        reviewedBy: "Current User",
+        reviewDate: new Date().toISOString().split('T')[0],
+        status: "Approved",
+        comments: reviewComment || "Report approved successfully."
+      };
+      
+      setReviewedReports([newReviewedReport, ...reviewedReports]);
+      setReports(reports.filter(r => r.id !== reportId));
+      setSelectedReport(null);
+      setReviewComment("");
+      
+      toast({
+        title: "Report Approved",
+        description: `${report.name} has been approved successfully.`,
+      });
+    }
   };
 
   const handleReject = (reportId: string) => {
-    console.log("Rejecting report:", reportId);
-    // Here you would typically make an API call
+    const report = reports.find(r => r.id === reportId);
+    if (report && reviewComment.trim()) {
+      // Move to reviewed reports
+      const newReviewedReport = {
+        id: report.id,
+        name: report.name,
+        type: report.type,
+        reviewedBy: "Current User",
+        reviewDate: new Date().toISOString().split('T')[0],
+        status: "Rejected",
+        comments: reviewComment
+      };
+      
+      setReviewedReports([newReviewedReport, ...reviewedReports]);
+      setReports(reports.filter(r => r.id !== reportId));
+      setSelectedReport(null);
+      setReviewComment("");
+      
+      toast({
+        title: "Report Rejected",
+        description: `${report.name} has been rejected.`,
+      });
+    } else {
+      toast({
+        title: "Comment Required",
+        description: "Please provide a comment before rejecting the report.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -191,7 +243,7 @@ const Approvals = () => {
 
         <TabsContent value="pending" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {pendingReports.map((report) => (
+            {reports.map((report) => (
               <Card key={report.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
@@ -238,7 +290,12 @@ const Approvals = () => {
                   <div className="flex space-x-2">
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="flex-1">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="flex-1"
+                          onClick={() => setSelectedReport(report)}
+                        >
                           <Eye className="mr-1 h-3 w-3" />
                           Review
                         </Button>
@@ -306,6 +363,7 @@ const Approvals = () => {
                           <Button 
                             variant="destructive"
                             onClick={() => handleReject(report.id)}
+                            disabled={!reviewComment.trim()}
                           >
                             <XCircle className="mr-2 h-4 w-4" />
                             Reject
@@ -349,6 +407,7 @@ const Approvals = () => {
                 </TableHeader>
                 <TableBody>
                   {recentlyReviewed.map((report) => (
+                  {reviewedReports.map((report) => (
                     <TableRow key={report.id}>
                       <TableCell className="font-medium">{report.id}</TableCell>
                       <TableCell>{report.name}</TableCell>

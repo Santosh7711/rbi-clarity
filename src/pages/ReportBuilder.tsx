@@ -179,8 +179,41 @@ const ReportBuilder = () => {
         return <Textarea placeholder="Enter detailed text..." disabled />;
       case "table":
         return (
-          <div className="border rounded p-4 bg-muted/50">
-            <p className="text-sm text-muted-foreground">Data table will appear here</p>
+          <div className="border rounded overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-muted">
+                <tr>
+                  <th className="p-2 text-left border-r">S.No</th>
+                  <th className="p-2 text-left border-r">Account Number</th>
+                  <th className="p-2 text-left border-r">Customer Name</th>
+                  <th className="p-2 text-left border-r">Amount (₹)</th>
+                  <th className="p-2 text-left">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-t">
+                  <td className="p-2 border-r">1</td>
+                  <td className="p-2 border-r">1234567890</td>
+                  <td className="p-2 border-r">Sample Customer</td>
+                  <td className="p-2 border-r">1,00,000</td>
+                  <td className="p-2">Active</td>
+                </tr>
+                <tr className="border-t bg-muted/20">
+                  <td className="p-2 border-r">2</td>
+                  <td className="p-2 border-r">0987654321</td>
+                  <td className="p-2 border-r">Another Customer</td>
+                  <td className="p-2 border-r">2,50,000</td>
+                  <td className="p-2">Pending</td>
+                </tr>
+                <tr className="border-t">
+                  <td className="p-2 border-r">3</td>
+                  <td className="p-2 border-r">5678901234</td>
+                  <td className="p-2 border-r">Third Customer</td>
+                  <td className="p-2 border-r">75,000</td>
+                  <td className="p-2">Closed</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         );
       default:
