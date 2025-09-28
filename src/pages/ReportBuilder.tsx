@@ -1,19 +1,5 @@
 import { useState } from "react";
-import { 
-  Plus, 
-  Trash2, 
-  Save, 
-  Eye,
-  Settings,
-  Type,
-  Hash,
-  Calendar,
-  DollarSign,
-  ToggleLeft,
-  List,
-  FileText,
-  Grid3X3
-} from "lucide-react";
+import { Plus, Trash2, Save, Eye, Settings, Type, Hash, Calendar, DollarSign, ToggleLeft, List, FileText, Grid3x3 as Grid3X3 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

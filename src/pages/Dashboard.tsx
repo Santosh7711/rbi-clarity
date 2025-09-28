@@ -1,20 +1,4 @@
-import { 
-  FileText, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
-  TrendingUp,
-  Users,
-  Shield,
-  Download,
-  Eye,
-  Calendar,
-  IndianRupee,
-  Building,
-  User,
-  Plus,
-  X
-} from "lucide-react";
+import { FileText, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle, Clock, TrendingUp, Users, Shield, Download, Eye, Calendar, IndianRupee, Building, User, Plus, X } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
