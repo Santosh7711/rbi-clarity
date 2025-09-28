@@ -8,6 +8,10 @@ import Dashboard from "./pages/Dashboard";
 import Reports from "./pages/Reports";
 import ReportBuilder from "./pages/ReportBuilder";
 import Approvals from "./pages/Approvals";
+import AuditTrail from "./pages/AuditTrail";
+import Exports from "./pages/Exports";
+import Schedule from "./pages/Schedule";
+import UserManagement from "./pages/UserManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,10 +32,10 @@ const App = () => (
             <Route path="compliance" element={<Dashboard />} />
             <Route path="compliance/:section" element={<Dashboard />} />
             <Route path="data-sources" element={<Dashboard />} />
-            <Route path="audit" element={<Dashboard />} />
-            <Route path="exports" element={<Dashboard />} />
-            <Route path="schedule" element={<Dashboard />} />
-            <Route path="users" element={<Dashboard />} />
+            <Route path="audit" element={<AuditTrail />} />
+            <Route path="exports" element={<Exports />} />
+            <Route path="schedule" element={<Schedule />} />
+            <Route path="users" element={<UserManagement />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
